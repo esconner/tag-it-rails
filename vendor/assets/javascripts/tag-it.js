@@ -222,7 +222,7 @@
 
             // Events.
             this.tagInput
-                .keydown(function(event) {
+                .keydown(function(event) {                    
                     // Backspace is not detected within a keypress, so it must use keydown.
                     if (event.which == $.ui.keyCode.BACKSPACE && that.tagInput.val() === '') {
                         var tag = that._lastTag();
@@ -235,6 +235,29 @@
                     } else if (that.options.removeConfirmation) {
                         that._lastTag().removeClass('remove ui-state-highlight');
                     }
+
+                    // My modifications BEGIN
+                    var kc = event.which || event.keyCode;
+                    
+                    // if we are on a crazy mobile device, then determine the last 
+                    // character typed based on where the selection start is located
+                    if( !kc || kc == 229 ) {
+                        var ss = that.selectionStart - 1;
+                        var ssv = ss || 0;
+                        var char = that.value.substr(ssv,1);
+                        kc = char.charCodeAt(0);
+                    }
+                    
+                    alert("KC is: " + kc);
+
+                    // for this piece of code, we are only interested in keyCodes for 
+                    // space, comma, semi-colon, single-quote, open bracket, close bracket 
+                    if( [32,188,186,222,221,219].indexOf(kc) > -1 ) {
+                        // do stuff
+                    } 
+                    
+                    // My modifications END
+
 
                     // Comma/Space/Enter are all valid delimiters for new tags,
                     // except when there is an open quote or if setting allowSpaces = true.

@@ -221,9 +221,20 @@
             }
 
             // Events.
+            // this.tagInput
+            //     .keydown(function(event) {
+            //         alert("DOWN: " + event.target.value);
+            //
+            //
+            //     });
+            // this.tagInput
+            //     .keypress(function(event) {
+            //         alert("PRESS: " + (event.keyCode == 13));
+            //
+            //
+            //     });
             this.tagInput
-                .keydown(function(event) {
-                    alert(event);
+                .keyup(function(event) {
                     // Backspace is not detected within a keypress, so it must use keydown.
                     if (event.which == $.ui.keyCode.BACKSPACE && that.tagInput.val() === '') {
                         var tag = that._lastTag();
@@ -236,64 +247,63 @@
                     } else if (that.options.removeConfirmation) {
                         that._lastTag().removeClass('remove ui-state-highlight');
                     }
-
-                    // My modifications BEGIN
-                    var kc = event.which || event.keyCode;
                     
-                    // if we are on a crazy mobile device, then determine the last 
+                    var kc = event.which || event.keyCode;
+
+                    // If we are on a crazy android device, that does not produce proper keycodes, determine the last
                     // character typed based on where the selection start is located
                     if( !kc || kc == 229 ) {
-                        var ss = that.selectionStart - 1;
-                        var ssv = ss || 0;
-                        var char = that.value.substr(ssv,1);
-                        kc = char.charCodeAt(0);
-                    }
-                    
-                    alert("KC is: " + kc);
-
-                    // for this piece of code, we are only interested in keyCodes for 
-                    // space, comma, semi-colon, single-quote, open bracket, close bracket 
-                    if( [32,188,186,222,221,219].indexOf(kc) > -1 ) {
-                        // do stuff
-                    } 
-                    
-                    // My modifications END
-
-
-                    // Comma/Space/Enter are all valid delimiters for new tags,
-                    // except when there is an open quote or if setting allowSpaces = true.
-                    // Tab will also create a tag, unless the tag input is empty,
-                    // in which case it isn't caught.
-                    if (
-                        (event.which === $.ui.keyCode.COMMA && event.shiftKey === false) ||
-                        event.which === $.ui.keyCode.ENTER ||
-                        (
-                            event.which == $.ui.keyCode.TAB &&
-                            that.tagInput.val() !== ''
-                        ) ||
-                        (
-                            event.which == $.ui.keyCode.SPACE &&
-                            that.options.allowSpaces !== true &&
+                        let selectionStart = (event.target.selectionStart - 1) || 0;
+                        let char = event.target.value.substr(selectionStart, 1);
+                        let code = char.charCodeAt(0);
+                        let isComma = (code === 44);
+                        let isEnter = (code === 13);
+                        let isTab = (code === 9);
+                        if (isComma || isEnter || isTab) {
+                            event.target.value = event.target.value.slice(0, -1);
+                            event.preventDefault();
+                            // Autocomplete will create its own tag from a selection and close automatically.
+                            if (!(that.options.autocomplete.autoFocus && that.tagInput.data('autocomplete-open'))) {
+                                that.tagInput.autocomplete('close');
+                                that.createTag(that._cleanedInput());
+                            }
+                        }
+                    } else {
+                        // Comma/Space/Enter are all valid delimiters for new tags,
+                        // except when there is an open quote or if setting allowSpaces = true.
+                        // Tab will also create a tag, unless the tag input is empty,
+                        // in which case it isn't caught.
+                        if (
+                            (event.which === $.ui.keyCode.COMMA && event.shiftKey === false) ||
+                            event.which === $.ui.keyCode.ENTER ||
                             (
-                                $.trim(that.tagInput.val()).replace( /^s*/, '' ).charAt(0) != '"' ||
+                                event.which == $.ui.keyCode.TAB &&
+                                that.tagInput.val() !== ''
+                            ) ||
+                            (
+                                event.which == $.ui.keyCode.SPACE &&
+                                that.options.allowSpaces !== true &&
                                 (
-                                    $.trim(that.tagInput.val()).charAt(0) == '"' &&
-                                    $.trim(that.tagInput.val()).charAt($.trim(that.tagInput.val()).length - 1) == '"' &&
-                                    $.trim(that.tagInput.val()).length - 1 !== 0
+                                    $.trim(that.tagInput.val()).replace( /^s*/, '' ).charAt(0) != '"' ||
+                                    (
+                                        $.trim(that.tagInput.val()).charAt(0) == '"' &&
+                                        $.trim(that.tagInput.val()).charAt($.trim(that.tagInput.val()).length - 1) == '"' &&
+                                        $.trim(that.tagInput.val()).length - 1 !== 0
+                                    )
                                 )
                             )
-                        )
-                    ) {
-                        // Enter submits the form if there's no text in the input.
-                        if (!(event.which === $.ui.keyCode.ENTER && that.tagInput.val() === '')) {
-                            event.preventDefault();
+                        ) {
+                            // Enter submits the form if there's no text in the input.
+                            if (!(event.which === $.ui.keyCode.ENTER && that.tagInput.val() === '')) {
+                                event.preventDefault();
+                            }
+                            // Autocomplete will create its own tag from a selection and close automatically.
+                            if (!(that.options.autocomplete.autoFocus && that.tagInput.data('autocomplete-open'))) {
+                                that.tagInput.autocomplete('close');
+                                that.createTag(that._cleanedInput());
+                            }
                         }
-
-                        // Autocomplete will create its own tag from a selection and close automatically.
-                        if (!(that.options.autocomplete.autoFocus && that.tagInput.data('autocomplete-open'))) {
-                            that.tagInput.autocomplete('close');
-                            that.createTag(that._cleanedInput());
-                        }
+                        
                     }
                 }).blur(function(e){
                     // Create a tag when the element loses focus.

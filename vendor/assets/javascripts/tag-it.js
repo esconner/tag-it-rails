@@ -222,7 +222,8 @@
 
             // Events.
             this.tagInput
-                .keydown(function(event) {                    
+                .keydown(function(event) {
+                    alert(event);
                     // Backspace is not detected within a keypress, so it must use keydown.
                     if (event.which == $.ui.keyCode.BACKSPACE && that.tagInput.val() === '') {
                         var tag = that._lastTag();

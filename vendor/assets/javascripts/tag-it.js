@@ -253,12 +253,12 @@
                     // If we are on a crazy android device, that does not produce proper keycodes, determine the last
                     // character typed based on where the selection start is located
                     if( !kc || kc == 229 ) {
-                        let selectionStart = (event.target.selectionStart - 1) || 0;
-                        let char = event.target.value.substr(selectionStart, 1);
-                        let code = char.charCodeAt(0);
-                        let isComma = (code === 44);
-                        let isEnter = (code === 13);
-                        let isTab = (code === 9);
+                        var selectionStart = (event.target.selectionStart - 1) || 0;
+                        var char = event.target.value.substr(selectionStart, 1);
+                        var code = char.charCodeAt(0);
+                        var isComma = (code === 44);
+                        var isEnter = (code === 13);
+                        var isTab = (code === 9);
                         if (isComma || isEnter || isTab) {
                             event.target.value = event.target.value.slice(0, -1);
                             event.preventDefault();

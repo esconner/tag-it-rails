@@ -1,5 +1,14 @@
 # tag-it-rails
 
+This is a custom forked version of tag-it-rails used in an internal project. Don't use use this!
+
+The version of the gem remains the same as in the original. Git tags are used to mark commits that are used in the custom project (i.e.: `ztt_v0.1.0`) to make it easy to determine what version to use in the Gemfile of the client:
+
+    gem 'tag-it-rails', git: 'https://github.com/esconner/tag-it-rails.git', tag: 'ztt_v0.1.0'
+
+
+# Original README
+
 [Tag-it!](http://aehlke.github.io/tag-it/) is a simple and configurable tag editing widget with autocomplete support.
 
 tag-it-rails is a gemified Tag-it! for rails.

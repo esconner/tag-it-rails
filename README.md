@@ -6,6 +6,7 @@ The version of the gem remains the same as in the original. Git tags are used to
 
     gem 'tag-it-rails', git: 'https://github.com/esconner/tag-it-rails.git', tag: 'ztt_v0.1.0'
 
+Some key ideas for the modifications were inspired by [This Post](9https://icewalker2g.wordpress.com/2016/08/31/determining-event-keycode-on-mobile-browser-chrome-android-firefox/).
 
 # Original README
 
